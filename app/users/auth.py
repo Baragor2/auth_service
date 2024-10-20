@@ -37,7 +37,8 @@ async def create_access_token(data: dict) -> str:
 
 async def authenticate_user(email: EmailStr, password: str):
     user = await users.find_one({"email": email})
-    if not user or not await validate_password(password, user["hashed_password"]):
+    check_result = await validate_password(password, user["hashed_password"])
+    if not user or not check_result:
         raise IncorrectUsernameOrPasswordException
     return user
 
