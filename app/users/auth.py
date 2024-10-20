@@ -43,15 +43,15 @@ async def authenticate_user(email: EmailStr, password: str):
     return user
 
 
-async def get_token(request: Request) -> Annotated[str, Cookie]:
-    token = request.cookies.get("admin_access_token")
+async def get_token(token: str) -> Annotated[str, Cookie]:
+    # token = request.cookies.get("admin_access_token")
     if not token:
         raise TokenAbsentException
     return token
 
 
-async def get_current_user(request: Request):
-    token: str = await get_token(request)
+async def get_current_user(token: str):
+    token: str = await get_token(token)
 
     try:
         secret_key = auth_settings.private_key_pass.read_text().encode()

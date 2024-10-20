@@ -43,25 +43,25 @@ async def login_user(
         user_data: SUser,
         admin_password_to_check: Annotated[str, Body()],
         response: Response
-) -> dict:
+) -> str:
     admin_hashed_pass = await admin_password.find_one({"unique_id": 1})
     if not await validate_password(admin_password_to_check, admin_hashed_pass["admin_password"]):
         raise IncorrectUsernameOrPasswordException
 
     user = await authenticate_user(user_data.email, user_data.password)
     access_token = await create_access_token({"sub": user["email"]})
-    response.set_cookie("admin_access_token", access_token, httponly=True)
-    return {"message": "successful login"}
+    # response.set_cookie("admin_access_token", access_token, httponly=True)
+    return access_token
 
 
-@router.post("/logout")
-async def logout_user(response: Response, request: Request) -> dict:
-    await get_current_user(request)
-    response.delete_cookie("admin_access_token")
-    return {"message": "successful logout"}
+# @router.post("/logout")
+# async def logout_user(response: Response, request: Request) -> dict:
+#     await get_current_user(request)
+#     response.delete_cookie("admin_access_token")
+#     return {"message": "successful logout"}
 
 
 @router.get("/check_token")
-async def check_token(request: Request) -> dict[str, str]:
-    await get_current_user(request)
+async def check_token(token: str) -> dict[str, str]:
+    await get_current_user(token)
     return {"message": "Valid token"}
