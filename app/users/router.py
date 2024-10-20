@@ -50,7 +50,7 @@ async def login_user(
 
     user = await authenticate_user(user_data.email, user_data.password)
     access_token = await create_access_token({"sub": user["email"]})
-    response.set_cookie("admin_access_token", access_token, httponly=True)
+    response.set_cookie("admin_access_token", access_token, httponly=False)
     return {"message": "successful login"}
 
 
@@ -59,3 +59,9 @@ async def logout_user(response: Response, request: Request) -> dict:
     await get_current_user(request)
     response.delete_cookie("admin_access_token")
     return {"message": "successful logout"}
+
+
+@router.get("/check_token")
+async def check_token(request: Request) -> dict[str, str]:
+    await get_current_user(request)
+    return {"message": "Valid token"}
