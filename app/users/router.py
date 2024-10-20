@@ -50,7 +50,7 @@ async def login_user(
 
     user = await authenticate_user(user_data.email, user_data.password)
     access_token = await create_access_token({"sub": user["email"]})
-    response.set_cookie("admin_access_token", access_token, httponly=False)
+    response.set_cookie("admin_access_token", access_token, httponly=True)
     return {"message": "successful login"}
 
 
